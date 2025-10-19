@@ -41,7 +41,10 @@ constructor(props){
         }
 
         if(Admins.Password === Password){
-          this.props.navigation.navigate("NAVBAR");
+          this.props.navigation.navigate("NAVBAR", {
+            admin_id: Admins.id,
+            admin_name: Admins.Nombre,
+          });
           Alert.alert('Bienvenido');
         }else{
           Alert.alert('Error', 'Correo o contraseña incorrectos.');

@@ -20,7 +20,7 @@ export default class Productos extends Component {
   async componentDidMount(){
     
     let { data: Productos2, error } = await supabase
-    .from('Productos2')
+    .from('vehiculos')
     .select('*')
 
     if(error){
@@ -37,9 +37,9 @@ export default class Productos extends Component {
       const  {search} = this.state
 
       let { data: Productos2, error } = await supabase
-      .from('Productos2')
+      .from('vehiculos')
       .select('*')
-      .ilike("Producto", `%${search}%`);
+      .ilike("make", `%${search}%`);
 
       if(error){
         Alert.alert('Error', 'No se pudo conectar con la base de datos.');
@@ -86,7 +86,7 @@ export default class Productos extends Component {
                 renderItem={({item}) => (
                   <View style={{ flexDirection: "row", alignItems: "center", padding: 20 }}>  
                     <Image
-                      source={{uri:item.Imagen}}
+                      source={{uri:item.imagen}}
                       style={{
                         width: 200,
                         height: 200,
@@ -104,7 +104,7 @@ export default class Productos extends Component {
                           marginBottom: 10,
                         }}
                       >
-                          {item.Producto}
+                          {item.make}
                       </Text>
                       <Text
                         style={{
@@ -114,7 +114,7 @@ export default class Productos extends Component {
                           marginBottom: 10,
                         }}
                       >
-                          {item.Cantidad}
+                          {item.model}
                       </Text>
                       <Text
                         style={{
@@ -123,12 +123,12 @@ export default class Productos extends Component {
                           textAlign: "center",
                           marginBottom: 10,
                         }}
-                      >{item.Precio}
+                      >{item.precio}
                       </Text>
                       
         
                       <View style={{ alignItems: "center" }}>
-                      <Button title="Ver Detalles" onPress={() => this.props.navigation.navigate("UPDATE", { Imagen: item.Imagen, })}/>
+                      <Button title="Ver Detalles" onPress={() => this.props.navigation.navigate("UPDATE", { imagen: item.imagen, })}/>
                       </View>
                     </View>
                   </View>

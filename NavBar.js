@@ -10,10 +10,11 @@ import BUSCADOR from './Buscador';
 
 const Tab = createBottomTabNavigator();
 
-export default function MyTabs() {
+export default function MyTabs({ route }) {
+  const { admin_id, admin_name } = route.params || {};  
   return (
       <Tab.Navigator>
-        <Tab.Screen name="ALTAS" component={ALTAS} />
+        <Tab.Screen name="ALTAS" component={ALTAS} initialParams={{ admin_id, admin_name }} />
         <Tab.Screen name="BAJAS" component={BAJAS} />
         {/*<Tab.Screen name="UPDATE" component={UPDATE} />*/}
         <Tab.Screen name="BUSCADOR" component={BUSCADOR} />

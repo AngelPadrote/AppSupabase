@@ -38,9 +38,9 @@ export default class Bajas extends Component {
 
     const urlPublica = `${supabaseUrl}/storage/v1/object/public/Imagenes/${imagenNombre}`;
     const { error: errorDB } = await supabase
-      .from('Productos2')
+      .from('vehiculos')
       .delete()
-      .eq('Imagen', urlPublica);
+      .eq('imagen', urlPublica);
 
     if (errorDB) {
       console.error('Error al eliminar registro:', errorDB);

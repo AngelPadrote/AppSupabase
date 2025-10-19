@@ -12,40 +12,43 @@ export default class Update extends Component {
     super(props);
     this.state = {
       NombrePhoto: '',
-      Producto: '',
-      Cantidad: '',
-      Precio: '',
-      Descripcion: ''
+      make: '',
+      model: '',
+      precio: '',
+      license_plate: '',
+      vin: ''
     };
   }
 
   async componentDidMount() {
-    const { Imagen } = this.props.route.params;
+    const { imagen } = this.props.route.params;
 
     const { data, error } = await supabase
-      .from('Productos2')
+      .from('vehiculos')
       .select('*')
-      .eq('Imagen', Imagen)
+      .eq('imagen', imagen)
       .single();
 
     if (error) {
       console.error('Error al obtener datos:', error);
-      Alert.alert('Error', 'No se pudo obtener la información del producto.');
+      Alert.alert('Error', 'No se pudo obtener la información del vehículo.');
     } else {
+      console.log("🚗 Datos recibidos:", data);
       this.setState({
-        NombrePhoto: Imagen.split('/').pop().replace('.jpg', ''),
-        Producto: data.Producto,
-        Cantidad: data.Cantidad,
-        Precio: data.Precio,
-        Descripcion: data.Descripcion
+        NombrePhoto: imagen.split('/').pop().replace('.jpg', ''),
+        make: data.make || '',
+        model: data.model || '',
+        precio: data.precio !== null ? data.precio.toString() : '', // ✅ campo correcto
+        license_plate: data.license_plate || '',
+        vin: data.vin || '',
       });
     }
   }
 
   actualizarProducto = async () => {
-    const { NombrePhoto, Producto, Cantidad, Precio, Descripcion } = this.state;
+    const { NombrePhoto, make, model, precio, license_plate, vin } = this.state;
 
-    if (!NombrePhoto || !Producto || !Cantidad || !Precio || !Descripcion) {
+    if (!NombrePhoto || !make || !model || !precio || !license_plate || !vin) {
       Alert.alert('Error', 'Completa todos los campos antes de actualizar.');
       return;
     }
@@ -53,26 +56,28 @@ export default class Update extends Component {
     const urlPublica = `${supabaseUrl}/storage/v1/object/public/Imagenes/${NombrePhoto}.jpg`;
 
     const { error } = await supabase
-      .from('Productos2')
+      .from('vehiculos')
       .update({
-        Producto,
-        Cantidad,
-        Precio,
-        Descripcion
+        make,
+        model,
+        precio: parseInt(precio, 10), // ✅ lo guarda como número entero
+        license_plate,
+        vin
       })
-      .eq('Imagen', urlPublica);
+      .eq('imagen', urlPublica);
 
     if (error) {
       console.error('Error al actualizar:', error);
-      Alert.alert('Error', 'No se pudo actualizar el producto.');
+      Alert.alert('Error', 'No se pudo actualizar el vehículo.');
     } else {
-      Alert.alert('Éxito', 'Producto actualizado correctamente.');
+      Alert.alert('Éxito', 'Vehículo actualizado correctamente.');
       this.setState({
         NombrePhoto: '',
-        Producto: '',
-        Cantidad: '',
-        Precio: '',
-        Descripcion: ''
+        make: '',
+        model: '',
+        precio: '',
+        license_plate: '',
+        vin: '',
       });
     }
   };
@@ -80,7 +85,7 @@ export default class Update extends Component {
   render() {
     return (
       <View style={{ padding: 20 }}>
-        <Text style={{ fontSize: 30, color: 'red', textAlign: 'center' }}>Actualizar Producto</Text>
+        <Text style={{ fontSize: 30, color: 'red', textAlign: 'center' }}>Actualizar Vehículo</Text>
 
         <TextInput
           placeholder="Nombre archivo imagen (sin .jpg)"
@@ -97,9 +102,9 @@ export default class Update extends Component {
           }}
         />
         <TextInput
-          placeholder="Nuevo nombre del producto"
-          value={this.state.Producto}
-          onChangeText={Producto => this.setState({ Producto })}
+          placeholder="Nuevo nombre del vehículo"
+          value={this.state.make}
+          onChangeText={make => this.setState({ make })}
           style={{
             height: 45,
             borderColor: '#ccc',
@@ -111,9 +116,9 @@ export default class Update extends Component {
           }}
         />
         <TextInput
-          placeholder="Nueva cantidad"
-          value={this.state.Cantidad}
-          onChangeText={Cantidad => this.setState({ Cantidad })}
+          placeholder="Nuevo modelo del vehículo"
+          value={this.state.model}
+          onChangeText={model => this.setState({ model })}
           style={{
             height: 45,
             borderColor: '#ccc',
@@ -125,9 +130,10 @@ export default class Update extends Component {
           }}
         />
         <TextInput
-          placeholder="Nuevo precio"
-          value={this.state.Precio}
-          onChangeText={Precio => this.setState({ Precio })}
+          placeholder="Nuevo Precio"
+          value={this.state.precio}
+          onChangeText={precio => this.setState({ precio })}
+          keyboardType="numeric"
           style={{
             height: 45,
             borderColor: '#ccc',
@@ -139,24 +145,36 @@ export default class Update extends Component {
           }}
         />
         <TextInput
-          placeholder="Nueva descripción"
-          value={this.state.Descripcion}
-          onChangeText={Descripcion => this.setState({ Descripcion })}
-          multiline
+          placeholder="Nuevas placas"
+          value={this.state.license_plate}
+          onChangeText={license_plate => this.setState({ license_plate })}
           style={{
-            height: 90,
+            height: 45,
             borderColor: '#ccc',
             borderWidth: 1,
             borderRadius: 10,
             marginVertical: 10,
             paddingHorizontal: 10,
-            backgroundColor: '#fff',
-            textAlignVertical: 'top'
+            backgroundColor: '#fff'
+          }}
+        />
+        <TextInput
+          placeholder="Nuevo VIN"
+          value={this.state.vin}
+          onChangeText={vin => this.setState({ vin })}
+          style={{
+            height: 45,
+            borderColor: '#ccc',
+            borderWidth: 1,
+            borderRadius: 10,
+            marginVertical: 10,
+            paddingHorizontal: 10,
+            backgroundColor: '#fff'
           }}
         />
 
         <View style={{ marginTop: 10 }}>
-          <Button title="Actualizar Producto" onPress={this.actualizarProducto} />
+          <Button title="Actualizar Vehículo" onPress={this.actualizarProducto} />
         </View>
       </View>
     );
